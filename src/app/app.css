@@ -1,4 +1,4 @@
-/* Clean background setup for wellB */
+/* Clean background setup for wellB with calming green elements */
 
 /* Full height background setup */
 :host {
@@ -10,5 +10,166 @@
   background-repeat: no-repeat;
   background-attachment: fixed;
   width: 100%;
+}
+
+/* Welcome Section - First viewport */
+.welcome-section {
   height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background: linear-gradient(
+    135deg,
+    rgba(46, 125, 50, 0.1) 0%,
+    rgba(67, 160, 71, 0.1) 50%,
+    rgba(102, 187, 106, 0.1) 100%
+  );
+  gap: 3rem;
+}
+
+.welcome-content {
+  text-align: center;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(46, 125, 50, 0.2);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(129, 199, 132, 0.3);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.welcome-title {
+  font-size: 3rem;
+  font-weight: 300;
+  margin: 0 0 1rem 0;
+  color: #2e7d32;
+  text-shadow: 0 2px 4px rgba(46, 125, 50, 0.1);
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+.welcome-subtitle {
+  font-size: 1.3rem;
+  color: #388e3c;
+  margin: 0;
+  opacity: 0.9;
+  font-weight: 300;
+}
+
+.get-started-btn {
+  background: linear-gradient(135deg, #66bb6a 0%, #4caf50 100%);
+  color: white;
+  border: none;
+  padding: 1rem 2.5rem;
+  font-size: 1.1rem;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  letter-spacing: 0.5px;
+}
+
+.get-started-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+  background: linear-gradient(135deg, #5cb85c 0%, #449d44 100%);
+}
+
+.get-started-btn:active {
+  transform: translateY(0);
+}
+
+.arrow-down {
+  font-size: 1.2rem;
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-5px);
+  }
+  60% {
+    transform: translateY(-3px);
+  }
+}
+
+/* Content Section */
+.content-section {
+  min-height: 100vh;
+  padding: 5rem 2rem;
+  background: linear-gradient(
+    to bottom,
+    rgba(232, 245, 233, 0.95) 0%,
+    rgba(200, 230, 201, 0.95) 100%
+  );
+  backdrop-filter: blur(10px);
+}
+
+.content-placeholder {
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 4rem 2rem;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 15px;
+  box-shadow: 0 4px 20px rgba(46, 125, 50, 0.1);
+  border: 1px solid rgba(129, 199, 132, 0.2);
+}
+
+.content-placeholder h2 {
+  color: #2e7d32;
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+  font-weight: 300;
+}
+
+.content-placeholder p {
+  color: #388e3c;
+  font-size: 1.2rem;
+  line-height: 1.6;
+  opacity: 0.9;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .welcome-title {
+    font-size: 2.2rem;
+  }
+
+  .welcome-subtitle {
+    font-size: 1.1rem;
+  }
+
+  .welcome-content {
+    margin: 1rem;
+    padding: 1.5rem;
+  }
+
+  .content-placeholder {
+    margin: 1rem;
+    padding: 2rem 1rem;
+  }
+
+  .content-placeholder h2 {
+    font-size: 2rem;
+  }
 }
