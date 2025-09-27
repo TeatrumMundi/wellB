@@ -7,7 +7,25 @@
     "**/Thumbs.db": true,
     ".github": true,
     ".vscode": true,
-    "node_modules": true
+    "node_modules": true,
+    ".angular/cache/20.3.3/wellB": true,
+    ".angular": true,
+    "tsconfig.json": true,
+    "tsconfig.spec.json": true,
+    "tsconfig.app.json": true,
+    "package-lock.json": true,
+    "angular.json": true
   },
-  "hide-files.files": [".github", ".vscode", "node_modules"]
+  "hide-files.files": [
+    ".github",
+    ".vscode",
+    "node_modules",
+    ".angular/cache/20.3.3/wellB",
+    ".angular",
+    "tsconfig.json",
+    "tsconfig.spec.json",
+    "tsconfig.app.json",
+    "package-lock.json",
+    "angular.json"
+  ]
 }
