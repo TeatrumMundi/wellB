@@ -14,7 +14,8 @@
     "tsconfig.spec.json": true,
     "tsconfig.app.json": true,
     "package-lock.json": true,
-    "angular.json": true
+    "angular.json": true,
+    ".editorconfig": true
   },
   "hide-files.files": [
     ".github",
@@ -26,6 +27,7 @@
     "tsconfig.spec.json",
     "tsconfig.app.json",
     "package-lock.json",
-    "angular.json"
+    "angular.json",
+    ".editorconfig"
   ]
 }
