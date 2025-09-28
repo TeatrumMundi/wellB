@@ -1,24 +1,114 @@
 ﻿<!-- Clean background with welcome image -->
 
-<div class="welcome-section">
-  <div class="welcome-content">
-    <h1 class="welcome-title">Welcome to {{ title() }}</h1>
-    <p class="welcome-subtitle">Find your peace and tranquility</p>
+<div
+  class="h-screen flex flex-col items-center justify-center relative bg-cover bg-center bg-no-repeat gap-12"
+  style="background-image: url('/welcome.png'); background-attachment: scroll"
+>
+  <!-- Green overlay -->
+  <div
+    class="absolute inset-0 bg-gradient-to-br from-green-800/10 via-green-600/10 to-green-500/10 pointer-events-none"
+  ></div>
+
+  <div
+    class="text-center p-8 bg-white/95 rounded-3xl shadow-2xl backdrop-blur-md border border-green-300/30 max-w-2xl mx-auto relative z-10"
+  >
+    <h1 class="text-5xl font-light mb-4 text-green-800 drop-shadow-sm font-sans">
+      Welcome to {{ title() }}
+    </h1>
+    <p class="text-xl text-green-700 m-0 opacity-90 font-light">Find your peace and tranquility</p>
   </div>
 
-  <div class="button-container">
-    <button class="get-started-btn" (click)="scrollToContent()">
+  <div class="flex justify-center items-center relative z-10">
+    <button
+      class="bg-gradient-to-br from-green-400 to-green-500 text-white border-none px-10 py-4 text-lg rounded-full cursor-pointer transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 hover:from-green-500 hover:to-green-600 active:translate-y-0 font-medium inline-flex items-center gap-2 tracking-wide"
+      (click)="scrollToContent()"
+    >
       Get Started
-      <span class="arrow-down">↓</span>
+      <span class="text-xl animate-bounce">↓</span>
     </button>
   </div>
 </div>
 
-<div class="content-section" #contentSection>
-  <div class="content-placeholder">
-    <!-- Your future content will go here -->
-    <h2>Your journey begins here</h2>
-    <p>This is where you can add more content when you're ready.</p>
+<div
+  class="h-screen py-20 px-8 bg-gradient-to-b from-green-50/95 to-green-100/95 backdrop-blur-sm flex items-center"
+  #contentSection
+>
+  <!-- Calendar Section -->
+  <div
+    class="w-full max-w-6xl mx-auto p-12 bg-white/90 rounded-3xl shadow-2xl border border-green-300/30 backdrop-blur-md flex flex-col h-full"
+  >
+    <div class="text-center mb-8">
+      <h2 class="text-green-800 text-4xl font-light m-0 drop-shadow-sm">
+        {{ getCurrentMonthYear() }}
+      </h2>
+    </div>
+
+    <!-- Calendar Table -->
+    <div
+      class="bg-green-50/60 rounded-2xl p-6 border border-green-200/30 flex-1 flex items-center justify-center"
+    >
+      <table class="border-separate border-spacing-4 table-fixed mx-auto h-full">
+        <!-- Days of the Week Header -->
+        <thead>
+          <tr>
+            <th class="calendar-weekday-header">Mon</th>
+            <th class="calendar-weekday-header">Tue</th>
+            <th class="calendar-weekday-header">Wed</th>
+            <th class="calendar-weekday-header">Thu</th>
+            <th class="calendar-weekday-header">Fri</th>
+            <th class="calendar-weekday-header">Sat</th>
+            <th class="calendar-weekday-header">Sun</th>
+          </tr>
+        </thead>
+
+        <!-- Calendar Days -->
+        <tbody>
+          @for (week of getCalendarWeeks(); track $index) {
+          <tr>
+            @for (day of week; track day?.date || $index) {
+            <td
+              class="calendar-day"
+              [class]="
+                day && !day.isCurrentMonth
+                  ? 'text-green-300 bg-white/40 hover:bg-green-200/30'
+                  : day && day.isToday
+                  ? 'bg-gradient-to-br from-green-400 to-green-500 text-white font-semibold shadow-lg border-green-500 hover:from-green-500 hover:to-green-600 hover:shadow-xl hover:-translate-y-0.5'
+                  : !day
+                  ? 'bg-transparent border-none cursor-default hover:bg-transparent hover:translate-y-0 hover:shadow-none'
+                  : ''
+              "
+            >
+              <div class="absolute inset-0 flex flex-col p-2">
+                <!-- Day number at the top -->
+                <div class="text-lg font-bold mb-1">
+                  {{ day?.day || '' }}
+                </div>
+
+                <!-- Wellness info below -->
+                @if (day) {
+                <div class="flex-1 flex flex-col justify-center">
+                  <div
+                    class="bg-green-200 rounded-md p-1 text-xs text-blue-600 font-medium space-y-0.5"
+                  >
+                    <div class="flex items-center justify-between">
+                      <span>💧</span>
+                      <span class="text-right">1.5/2.1L</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                      <span>🏃</span>
+                      <span class="text-right">1k/10k</span>
+                    </div>
+                  </div>
+                </div>
+                }
+              </div>
+            </td>
+            }
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 
