@@ -1,4 +1,6 @@
 import { Component, signal, ElementRef, ViewChild, OnInit } from '@angular/core';
+import { MEDITATION_VIDEOS } from './meditation-videos';
+import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 // Angular Material modules used by the modal inputs
@@ -15,16 +17,24 @@ interface CalendarDay {
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, FormsModule, MatFormFieldModule, MatInputModule],
+  imports: [RouterOutlet, FormsModule, CommonModule, MatFormFieldModule, MatInputModule],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
 export class App implements OnInit {
   protected readonly title = signal('wellB');
-  protected readonly calendarDays = signal<CalendarDay[]>([]);
+  protected readonly calendarDays = signal<(CalendarDay | null)[]>([]);
   protected readonly calendarWeeks = signal<(CalendarDay | null)[][]>([]);
+  // Currently displayed month (Date set to first day of month)
+  protected readonly displayedMonth = signal<Date>(
+    new Date(new Date().getFullYear(), new Date().getMonth(), 1)
+  );
 
   @ViewChild('contentSection') contentSection!: ElementRef;
+  @ViewChild('meditationRow') meditationRow!: ElementRef;
+
+  // Videos list imported from editable file
+  protected meditationVideos = MEDITATION_VIDEOS;
 
   // Selected day for the editor modal
   protected selectedDay: CalendarDay | null = null;
@@ -47,10 +57,15 @@ export class App implements OnInit {
   private readonly STORAGE_KEY = 'wellb_daily_data_v1';
 
   ngOnInit() {
-    const days = this.generateCalendarDays();
+    this.refreshCalendar();
+    this.loadFromStorage();
+  }
+
+  /** Refresh calendar based on displayedMonth signal */
+  protected refreshCalendar() {
+    const days = this.generateCalendarDays(this.displayedMonth());
     this.calendarDays.set(days);
     this.calendarWeeks.set(this.organizeIntoWeeks(days));
-    this.loadFromStorage();
   }
 
   scrollToContent() {
@@ -60,8 +75,21 @@ export class App implements OnInit {
     });
   }
 
+  // Scroll meditation thumbnails row left/right by viewport amount
+  protected scrollMeditationLeft() {
+    if (!this.meditationRow) return;
+    const meditationRowElement = this.meditationRow.nativeElement as HTMLElement;
+    meditationRowElement.scrollBy({ left: -Math.min(meditationRowElement.clientWidth, 400), behavior: 'smooth' });
+  }
+
+  protected scrollMeditationRight() {
+    if (!this.meditationRow) return;
+    const meditationRowElement = this.meditationRow.nativeElement as HTMLElement;
+    meditationRowElement.scrollBy({ left: Math.min(meditationRowElement.clientWidth, 400), behavior: 'smooth' });
+  }
+
   getCurrentMonthYear(): string {
-    const now = new Date();
+    const now = this.displayedMonth();
     const monthNames = [
       'January',
       'February',
@@ -79,8 +107,8 @@ export class App implements OnInit {
     return `${monthNames[now.getMonth()]} ${now.getFullYear()}`;
   }
 
-  private generateCalendarDays(): CalendarDay[] {
-    const now = new Date();
+  private generateCalendarDays(baseDate?: Date): (CalendarDay | null)[] {
+    const now = baseDate ? new Date(baseDate) : new Date();
     const year = now.getFullYear();
     const month = now.getMonth();
 
@@ -89,28 +117,18 @@ export class App implements OnInit {
     // Last day of the current month
     const lastDay = new Date(year, month + 1, 0);
 
-    // Start from the first Monday of the calendar grid
-    const startDate = new Date(firstDay);
     const firstDayOfWeek = firstDay.getDay();
     // Convert Sunday (0) to 7 for Monday-based week calculation
     const mondayBasedFirstDay = firstDayOfWeek === 0 ? 7 : firstDayOfWeek;
-    startDate.setDate(startDate.getDate() - (mondayBasedFirstDay - 1));
+    const padCount = mondayBasedFirstDay - 1; // number of leading blanks before the 1st
 
-    const days: CalendarDay[] = [];
+    const days: (CalendarDay | null)[] = [];
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    // Add previous month days if needed
-    for (let date = new Date(startDate); date < firstDay; date.setDate(date.getDate() + 1)) {
-      const currentDate = new Date(date);
-      currentDate.setHours(0, 0, 0, 0);
-
-      days.push({
-        day: date.getDate(),
-        date: new Date(date),
-        isCurrentMonth: false,
-        isToday: currentDate.getTime() === today.getTime(),
-      });
+    // Add leading nulls for days before the first of the month
+    for (let i = 0; i < padCount; i++) {
+      days.push(null);
     }
 
     // Add current month days
@@ -126,16 +144,28 @@ export class App implements OnInit {
       });
     }
 
-    // Don't add next month days - leave empty spaces instead
-
     return days;
   }
 
-  getCalendarDays(): CalendarDay[] {
+  protected prevMonth() {
+    const curr = this.displayedMonth();
+    const prev = new Date(curr.getFullYear(), curr.getMonth() - 1, 1);
+    this.displayedMonth.set(prev);
+    this.refreshCalendar();
+  }
+
+  protected nextMonth() {
+    const curr = this.displayedMonth();
+    const next = new Date(curr.getFullYear(), curr.getMonth() + 1, 1);
+    this.displayedMonth.set(next);
+    this.refreshCalendar();
+  }
+
+  getCalendarDays(): (CalendarDay | null)[] {
     return this.calendarDays();
   }
 
-  private organizeIntoWeeks(days: CalendarDay[]): (CalendarDay | null)[][] {
+  private organizeIntoWeeks(days: (CalendarDay | null)[]): (CalendarDay | null)[][] {
     const weeks: (CalendarDay | null)[][] = [];
 
     // Fill the first week with previous month days if needed
@@ -265,6 +295,68 @@ export class App implements OnInit {
 
   protected getDayData(date: Date): WellnessData | undefined {
     return this.dailyData.get(this.getDateKey(date));
+  }
+
+  // --- Summary / statistics helpers ---
+  /** Returns an array of all stored entries as [dateKey, WellnessData] */
+  protected getAllEntries(): Array<{ key: string; date: Date; data: WellnessData }> {
+    const out: Array<{ key: string; date: Date; data: WellnessData }> = [];
+    for (const [k, v] of this.dailyData.entries()) {
+      const parts = k.split('-');
+      const d = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+      out.push({ key: k, date: d, data: v });
+    }
+    return out.sort((a, b) => a.date.getTime() - b.date.getTime());
+  }
+
+  protected getEntriesForMonth(date: Date): Array<{ key: string; date: Date; data: WellnessData }> {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    return this.getAllEntries().filter(
+      (e) => e.date.getFullYear() === year && e.date.getMonth() === month
+    );
+  }
+
+  protected computeSummary(entries: Array<{ key: string; date: Date; data: WellnessData }>) {
+    const daysEntered = entries.length;
+    let totalWater = 0;
+    let totalSteps = 0;
+    let daysMeetingWaterGoal = 0;
+    let daysMeetingStepsGoal = 0;
+
+    for (const e of entries) {
+      totalWater += e.data.water || 0;
+      totalSteps += e.data.steps || 0;
+      if ((e.data.water || 0) >= (e.data.waterGoal || this.DEFAULT_WATER_GOAL))
+        daysMeetingWaterGoal++;
+      if ((e.data.steps || 0) >= (e.data.stepsGoal || this.DEFAULT_STEPS_GOAL))
+        daysMeetingStepsGoal++;
+    }
+
+    const avgWater = daysEntered ? totalWater / daysEntered : 0;
+    const avgSteps = daysEntered ? totalSteps / daysEntered : 0;
+
+    return {
+      daysEntered,
+      totalWater,
+      avgWater,
+      totalSteps,
+      avgSteps,
+      pctWaterGoal: daysEntered ? Math.round((daysMeetingWaterGoal / daysEntered) * 100) : 0,
+      pctStepsGoal: daysEntered ? Math.round((daysMeetingStepsGoal / daysEntered) * 100) : 0,
+    };
+  }
+
+  // Summary for currently displayed month
+  protected get monthSummary() {
+    const entries = this.getEntriesForMonth(this.displayedMonth());
+    return this.computeSummary(entries);
+  }
+
+  // Summary for all time
+  protected get allTimeSummary() {
+    const entries = this.getAllEntries();
+    return this.computeSummary(entries);
   }
 
   private getDateKey(date: Date) {

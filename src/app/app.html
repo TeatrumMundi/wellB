@@ -1,14 +1,8 @@
-﻿<!-- Clean background with welcome image -->
-
+﻿<!-- Welcome Section -->
 <div
   class="h-screen flex flex-col items-center justify-center relative bg-cover bg-center bg-no-repeat gap-12"
   style="background-image: url('/welcome.png'); background-attachment: scroll"
 >
-  <!-- Green overlay -->
-  <div
-    class="absolute inset-0 bg-gradient-to-br from-green-800/10 via-green-600/10 to-green-500/10 pointer-events-none"
-  ></div>
-
   <div
     class="text-center p-8 bg-white/95 rounded-3xl shadow-2xl backdrop-blur-md border border-green-300/30 max-w-2xl mx-auto relative z-10"
   >
@@ -29,18 +23,90 @@
   </div>
 </div>
 
+<!-- Meditation Section -->
+<style>
+  /* Hide scrollbar  */
+  .meditation-row {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .meditation-row::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+</style>
+<div class="max-w-7xl mx-auto p-4 md:p-8 mt-6">
+  <h3 class="text-green-800 text-lg md:text-2xl font-semibold mb-4">Meditation Videos</h3>
+
+  <div class="relative">
+    <button
+      class="absolute left-0 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-sm bg-white/80 shadow flex items-center justify-center"
+      (click)="scrollMeditationLeft()"
+      aria-label="Scroll left"
+    >
+      <span class="material-icons text-green-700">chevron_left</span>
+    </button>
+
+    <div
+      #meditationRow
+      class="flex gap-4 overflow-x-auto pb-2 scroll-smooth scrollbar-hide px-10 meditation-row mx-10"
+    >
+      @for (video of meditationVideos; track video.id) {
+      <a
+        class="min-w-[12rem] block group bg-black/5 rounded-lg overflow-hidden hover:scale-105 transform duration-300"
+        href="{{ video.url }}"
+        target="_blank"
+        rel="noopener noreferrer"
+        title="{{ video.title }}"
+      >
+        <img class="w-full h-28 object-cover" src="{{ video.thumb }}" alt="{{ video.title }}" />
+        <div class="p-2 text-sm text-gray-700 group-hover:text-green-700">{{ video.title }}</div>
+      </a>
+      }
+    </div>
+
+    <button
+      class="absolute right-0 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-sm bg-white/80 shadow flex items-center justify-center"
+      (click)="scrollMeditationRight()"
+      aria-label="Scroll right"
+    >
+      <span class="material-icons text-green-700">chevron_right</span>
+    </button>
+  </div>
+</div>
+
+<!-- Calendar Section -->
 <div
-  class="min-h-screen py-4 md:py-20 px-2 md:px-8 bg-gradient-to-b from-green-50/95 to-green-100/95 backdrop-blur-sm flex items-center"
+  class="min-h-screen py-4 md:py-20 px-2 md:px-8  flex items-center"
   #contentSection
 >
-  <!-- Calendar Section -->
   <div
     class="w-full max-w-7xl mx-auto p-3 md:p-12 bg-white/90 rounded-xl md:rounded-3xl shadow-2xl border border-green-300/30 backdrop-blur-md flex flex-col h-full"
   >
-    <div class="text-center mb-4 md:mb-8">
-      <h2 class="text-green-800 text-2xl md:text-4xl font-light m-0 drop-shadow-sm">
-        {{ getCurrentMonthYear() }}
-      </h2>
+    <div class="text-center mb-4 md:mb-8 flex items-center justify-center gap-4">
+      <button
+        class="px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-200/70 text-2xl md:text-3xl w-10 h-10 flex items-center justify-center cursor-pointer duration-300"
+        (click)="prevMonth()"
+        aria-label="Previous month"
+      >
+        ‹
+      </button>
+
+      <div class="w-64 md:w-80 text-center">
+        <h2 class="text-green-800 text-2xl md:text-4xl font-light m-0 drop-shadow-sm truncate">
+          {{ getCurrentMonthYear() }}
+        </h2>
+      </div>
+
+      <button
+        class="px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-200/70 text-2xl md:text-3xl w-10 h-10 flex items-center justify-center cursor-pointer duration-300"
+        (click)="nextMonth()"
+        aria-label="Next month"
+      >
+        ›
+      </button>
     </div>
 
     <!-- Calendar Table -->
@@ -53,13 +119,41 @@
         <!-- Days of the Week Header -->
         <thead>
           <tr>
-            <th class="calendar-weekday-header">Mon</th>
-            <th class="calendar-weekday-header">Tue</th>
-            <th class="calendar-weekday-header">Wed</th>
-            <th class="calendar-weekday-header">Thu</th>
-            <th class="calendar-weekday-header">Fri</th>
-            <th class="calendar-weekday-header">Sat</th>
-            <th class="calendar-weekday-header">Sun</th>
+            <th
+              class="text-center font-semibold text-green-800 px-2 py-2 text-xs uppercase bg-green-100/50 w-14 md:w-24 lg:w-32 h-8 md:h-10 rounded-sm md:rounded-md"
+            >
+              Mon
+            </th>
+            <th
+              class="text-center font-semibold text-green-800 px-2 py-2 text-xs uppercase bg-green-100/50 w-14 md:w-24 lg:w-32 h-8 md:h-10 rounded-sm md:rounded-md"
+            >
+              Tue
+            </th>
+            <th
+              class="text-center font-semibold text-green-800 px-2 py-2 text-xs uppercase bg-green-100/50 w-14 md:w-24 lg:w-32 h-8 md:h-10 rounded-sm md:rounded-md"
+            >
+              Wed
+            </th>
+            <th
+              class="text-center font-semibold text-green-800 px-2 py-2 text-xs uppercase bg-green-100/50 w-14 md:w-24 lg:w-32 h-8 md:h-10 rounded-sm md:rounded-md"
+            >
+              Thu
+            </th>
+            <th
+              class="text-center font-semibold text-green-800 px-2 py-2 text-xs uppercase bg-green-100/50 w-14 md:w-24 lg:w-32 h-8 md:h-10 rounded-sm md:rounded-md"
+            >
+              Fri
+            </th>
+            <th
+              class="text-center font-semibold text-green-800 px-2 py-2 text-xs uppercase bg-green-100/50 w-14 md:w-24 lg:w-32 h-8 md:h-10 rounded-sm md:rounded-md"
+            >
+              Sat
+            </th>
+            <th
+              class="text-center font-semibold text-green-800 px-2 py-2 text-xs uppercase bg-green-100/50 w-14 md:w-24 lg:w-32 h-8 md:h-10 rounded-sm md:rounded-md"
+            >
+              Sun
+            </th>
           </tr>
         </thead>
 
@@ -69,26 +163,23 @@
           <tr>
             @for (day of week; track day?.date || $index) {
             <td
-              class="calendar-day"
-              (click)="onDayClick(day)"
-              [class]="
-                day && !day.isCurrentMonth
-                  ? 'text-green-300 bg-white/40 hover:bg-green-200/30'
-                  : day && day.isToday
-                  ? 'bg-gradient-to-br from-green-400 to-green-500 text-white font-semibold shadow-lg border-green-500 hover:from-green-500 hover:to-green-600 hover:shadow-xl hover:-translate-y-0.5'
-                  : !day
-                  ? 'bg-transparent border-none cursor-default hover:bg-transparent hover:translate-y-0 hover:shadow-none'
-                  : ''
-              "
+              class="text-center bg-white/90 rounded-sm md:rounded-md font-medium text-green-800 cursor-pointer transition-transform duration-300 border border-green-200 text-sm md:text-base relative w-14 md:w-24 lg:w-32 h-16 md:h-20 lg:h-[5.5rem] align-top hover:bg-green-100/50 hover:-translate-y-1 hover:shadow-lg"
+              (click)="day && onDayClick(day)"
+              [attr.aria-disabled]="!day ? 'true' : null"
+              [ngClass]="{
+                'bg-gray-50 text-gray-400 border-none cursor-default pointer-events-none': !day,
+                'bg-gradient-to-br from-green-400 to-green-500 text-white font-semibold shadow-lg border-green-500 hover:from-green-500 hover:to-green-600 hover:shadow-xl hover:-translate-y-[2px]':
+                  day?.isToday
+              }"
             >
+              @if (day) {
               <div class="absolute inset-0 flex flex-col p-1 md:p-2">
-                <!-- Day number at the top -->
+                <!-- Day number -->
                 <div class="text-xs lg:text-lg font-bold mb-0.5 md:mb-1">
-                  {{ day?.day || '' }}
+                  {{ day.day }}
                 </div>
 
-                <!-- Wellness info below -->
-                @if (day) {
+                <!-- Wellness info  -->
                 <div class="flex-1 flex flex-col justify-center">
                   <!-- If user has data show it, otherwise show a darker 'Click to add' hint -->
                   @if (hasDataForDay(day.date)) {
@@ -99,7 +190,7 @@
                       <span class="text-xs">💧</span>
                       <span class="text-right text-xs">
                         {{ getDayData(day.date)?.water || 0
-                        }}<span class="hidden sm:inline"
+                        }}<span class="hidden md:inline"
                           >/
                           {{
                             formatCompact(getDayData(day.date)?.waterGoal) || formatCompact(2)
@@ -111,7 +202,7 @@
                       <span class="text-xs">🏃</span>
                       <span class="text-right text-xs">
                         {{ getDayData(day.date)?.steps || 0
-                        }}<span class="hidden sm:inline"
+                        }}<span class="hidden md:inline"
                           >/
                           {{
                             formatCompact(getDayData(day.date)?.stepsGoal) || formatCompact(10000)
@@ -122,14 +213,17 @@
                   </div>
                   } @if (!hasDataForDay(day.date)) {
                   <div
-                    class="bg-transparent rounded-sm md:rounded-md p-1 text-xs text-gray-700 font-medium italic click-to-add"
+                    class="bg-gray-200 rounded-sm md:rounded-md p-1 text-xs text-gray-700 font-medium"
                   >
-                    Click to add
+                    <span class="md:hidden">+</span>
+                    <span class="hidden md:inline italic">Click to add</span>
                   </div>
                   }
                 </div>
-                }
               </div>
+              } @if (!day) {
+              <div class="p-1 md:p-2 h-full" aria-hidden="true"></div>
+              }
             </td>
             }
           </tr>
@@ -140,16 +234,103 @@
   </div>
 </div>
 
-<router-outlet />
+<!-- Summary Section -->
+<div class="max-w-7xl mx-auto p-4 md:p-8 mt-6">
+  <h3 class="text-green-800 text-lg md:text-2xl font-semibold mb-4">Summary</h3>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <!-- Month summary card -->
+    <div class="bg-white/70 backdrop-blur-md rounded-xl shadow-lg p-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <button
+            class="w-9 h-9 rounded-md bg-black/10 hover:bg-black/15 flex items-center justify-center transition-transform cursor-pointer duration-300"
+            (click)="prevMonth()"
+            aria-label="Previous month"
+          >
+            <span class="material-icons text-green-700">chevron_left</span>
+          </button>
+
+          <div>
+            <div class="text-sm text-green-600/80">This month</div>
+            <div class="text-2xl text-emerald-800 font-semibold drop-shadow">
+              {{ getCurrentMonthYear() }}
+            </div>
+          </div>
+        </div>
+
+        <button
+          class="w-9 h-9 rounded-md bg-black/10 hover:bg-black/15 flex items-center justify-center transition-transform cursor-pointer duration-300"
+          (click)="nextMonth()"
+          aria-label="Next month"
+        >
+          <span class="material-icons text-green-700">chevron_right</span>
+        </button>
+      </div>
+
+      <div class="mt-4 grid grid-cols-2 gap-3">
+        <div class="p-3 bg-green-50 rounded">
+          <div class="text-xs text-gray-500">Days entered</div>
+          <div class="text-xl font-bold">{{ monthSummary.daysEntered }}</div>
+        </div>
+
+        <div class="p-3 bg-green-50 rounded">
+          <div class="text-xs text-gray-500">Avg water</div>
+          <div class="text-xl font-bold">{{ monthSummary.avgWater | number : '1.1-1' }} L</div>
+        </div>
+
+        <div class="p-3 bg-green-50 rounded">
+          <div class="text-xs text-gray-500">Avg steps</div>
+          <div class="text-xl font-bold">{{ monthSummary.avgSteps | number : '1.0-0' }}</div>
+        </div>
+
+        <div class="p-3 bg-green-50 rounded">
+          <div class="text-xs text-gray-500">% goals met (water)</div>
+          <div class="text-xl font-bold">{{ monthSummary.pctWaterGoal }}%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- All-time summary card -->
+    <div class="bg-white/70 backdrop-blur-md rounded-xl shadow-lg p-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <div class="text-sm text-green-600/80">All time</div>
+          <div class="text-2xl text-green-800 font-semibold drop-shadow">Overall stats</div>
+        </div>
+      </div>
+
+      <div class="mt-4 grid grid-cols-2 gap-3">
+        <div class="p-3 bg-green-50 rounded">
+          <div class="text-xs text-gray-500">Days entered</div>
+          <div class="text-xl font-bold">{{ allTimeSummary.daysEntered }}</div>
+        </div>
+
+        <div class="p-3 bg-green-50 rounded">
+          <div class="text-xs text-gray-500">Total water</div>
+          <div class="text-xl font-bold">{{ allTimeSummary.totalWater | number : '1.1-1' }} L</div>
+        </div>
+
+        <div class="p-3 bg-green-50 rounded">
+          <div class="text-xs text-gray-500">Total steps</div>
+          <div class="text-xl font-bold">{{ allTimeSummary.totalSteps | number : '1.0-0' }}</div>
+        </div>
+
+        <div class="p-3 bg-green-50 rounded">
+          <div class="text-xs text-gray-500">% goals met (steps)</div>
+          <div class="text-xl font-bold">{{ allTimeSummary.pctStepsGoal }}%</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- Day Editor Modal -->
 @if (selectedDay) {
 <div class="fixed inset-0 z-50 flex items-center justify-center">
   <div class="absolute inset-0 bg-black/50" (click)="closeEditor()"></div>
   <div class="bg-white rounded-xl z-10 w-[90%] max-w-md mx-auto relative overflow-hidden">
-    <div
-      class="bg-emerald-600 w-full h-15 relative flex items-center justify-center text-white"
-    >
+    <div class="bg-emerald-600 w-full h-15 relative flex items-center justify-center text-white">
       <!-- Left-top: Delete  -->
       <button
         class="absolute left-3 top-3 inline-flex items-center justify-center w-9 h-9 rounded-xl bg-red-200 hover:bg-red-200/70 transition-colors duration-300 cursor-pointer"
@@ -180,14 +361,13 @@
         <span class="material-icons text-gray-700" aria-hidden="true">add</span>
       </button>
 
-
       <!-- Day number display -->
       <h3 class="text-lg font-semibold">{{ selectedDay.day }} {{ getCurrentMonthYear() }}</h3>
     </div>
 
     <div class="p-6 space-y-3">
       <div>
-        <mat-form-field  class="w-full">
+        <mat-form-field class="w-full">
           <mat-label>Water | Goal: {{ formatCompact(editingData.waterGoal) }} L</mat-label>
           <input
             matInput
@@ -201,7 +381,7 @@
       </div>
 
       <div>
-        <mat-form-field  class="w-full">
+        <mat-form-field class="w-full">
           <mat-label>Steps | Goal: {{ formatCompact(editingData.stepsGoal) }}</mat-label>
           <input matInput type="number" [(ngModel)]="editingData.steps" aria-label="Steps count" />
         </mat-form-field>
@@ -210,3 +390,5 @@
   </div>
 </div>
 }
+
+<router-outlet />
