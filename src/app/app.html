@@ -70,6 +70,7 @@
             @for (day of week; track day?.date || $index) {
             <td
               class="calendar-day"
+              (click)="onDayClick(day)"
               [class]="
                 day && !day.isCurrentMonth
                   ? 'text-green-300 bg-white/40 hover:bg-green-200/30'
@@ -89,22 +90,43 @@
                 <!-- Wellness info below -->
                 @if (day) {
                 <div class="flex-1 flex flex-col justify-center">
+                  <!-- If user has data show it, otherwise show a darker 'Click to add' hint -->
+                  @if (hasDataForDay(day.date)) {
                   <div
                     class="bg-green-200 rounded-sm md:rounded-md p-0.5 md:p-1 text-xs text-blue-600 font-medium space-y-0 md:space-y-0.5"
                   >
                     <div class="flex items-center justify-between text-xs md:text-xs">
                       <span class="text-xs">💧</span>
                       <span class="text-right text-xs">
-                        1.5<span class="hidden sm:inline">/2.1</span>L
+                        {{ getDayData(day.date)?.water || 0
+                        }}<span class="hidden sm:inline"
+                          >/
+                          {{
+                            formatCompact(getDayData(day.date)?.waterGoal) || formatCompact(2)
+                          }}</span
+                        >L
                       </span>
                     </div>
                     <div class="flex items-center justify-between text-xs md:text-xs">
                       <span class="text-xs">🏃</span>
                       <span class="text-right text-xs">
-                        1k<span class="hidden sm:inline">/10k</span>
+                        {{ getDayData(day.date)?.steps || 0
+                        }}<span class="hidden sm:inline"
+                          >/
+                          {{
+                            formatCompact(getDayData(day.date)?.stepsGoal) || formatCompact(10000)
+                          }}</span
+                        >
                       </span>
                     </div>
                   </div>
+                  } @if (!hasDataForDay(day.date)) {
+                  <div
+                    class="bg-transparent rounded-sm md:rounded-md p-1 text-xs text-gray-700 font-medium italic click-to-add"
+                  >
+                    Click to add
+                  </div>
+                  }
                 </div>
                 }
               </div>
@@ -119,3 +141,72 @@
 </div>
 
 <router-outlet />
+
+<!-- Day Editor Modal -->
+@if (selectedDay) {
+<div class="fixed inset-0 z-50 flex items-center justify-center">
+  <div class="absolute inset-0 bg-black/50" (click)="closeEditor()"></div>
+  <div class="bg-white rounded-xl z-10 w-[90%] max-w-md mx-auto relative overflow-hidden">
+    <div
+      class="bg-emerald-600 w-full h-15 relative flex items-center justify-center text-white"
+    >
+      <!-- Left-top: Delete  -->
+      <button
+        class="absolute left-3 top-3 inline-flex items-center justify-center w-9 h-9 rounded-xl bg-red-200 hover:bg-red-200/70 transition-colors duration-300 cursor-pointer"
+        title="Clear day"
+        (click)="clearSelectedDay()"
+        aria-label="Clear day"
+      >
+        <span class="material-icons text-red-600" aria-hidden="true">delete_forever</span>
+      </button>
+
+      <!-- Right-top: Close  -->
+      <button
+        class="absolute right-1/48 top-3 inline-flex items-center justify-center w-9 h-9 rounded-xl bg-gray-200 hover:bg-gray-200/70 transition-colors duration-300 cursor-pointer"
+        title="Close"
+        (click)="closeEditor()"
+        aria-label="Close editor"
+      >
+        <span class="material-icons text-gray-700" aria-hidden="true">clear</span>
+      </button>
+
+      <!-- Right-top: Close  -->
+      <button
+        class="absolute right-3/24 top-3 inline-flex items-center justify-center w-9 h-9 rounded-xl bg-emerald-200 hover:bg-emerald-200/70 transition-colors duration-300 cursor-pointer"
+        title="Save"
+        (click)="saveData()"
+        aria-label="Save changes and close editor"
+      >
+        <span class="material-icons text-gray-700" aria-hidden="true">add</span>
+      </button>
+
+
+      <!-- Day number display -->
+      <h3 class="text-lg font-semibold">{{ selectedDay.day }} {{ getCurrentMonthYear() }}</h3>
+    </div>
+
+    <div class="p-6 space-y-3">
+      <div>
+        <mat-form-field  class="w-full">
+          <mat-label>Water | Goal: {{ formatCompact(editingData.waterGoal) }} L</mat-label>
+          <input
+            matInput
+            type="number"
+            step="0.1"
+            [(ngModel)]="editingData.water"
+            aria-label="Water in liters"
+          />
+          <mat-hint align="start"></mat-hint>
+        </mat-form-field>
+      </div>
+
+      <div>
+        <mat-form-field  class="w-full">
+          <mat-label>Steps | Goal: {{ formatCompact(editingData.stepsGoal) }}</mat-label>
+          <input matInput type="number" [(ngModel)]="editingData.steps" aria-label="Steps count" />
+        </mat-form-field>
+      </div>
+    </div>
+  </div>
+</div>
+}
