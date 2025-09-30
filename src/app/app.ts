@@ -1,6 +1,9 @@
 import { Component, signal, ElementRef, ViewChild, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+// Angular Material modules used by the modal inputs
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 interface CalendarDay {
   day: number;
@@ -11,7 +14,8 @@ interface CalendarDay {
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, FormsModule],
+  standalone: true,
+  imports: [RouterOutlet, FormsModule, MatFormFieldModule, MatInputModule],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })

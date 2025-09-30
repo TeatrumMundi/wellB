@@ -146,66 +146,66 @@
 @if (selectedDay) {
 <div class="fixed inset-0 z-50 flex items-center justify-center">
   <div class="absolute inset-0 bg-black/50" (click)="closeEditor()"></div>
-  <div class="bg-white rounded-xl p-6 z-10 w-[92%] max-w-md mx-auto relative">
-    <!-- Left-top: Delete (DeleteForeverIcon) -->
-    <button
-      class="absolute -translate-y-2 left-3 top-3 inline-flex items-center justify-center w-9 h-9 rounded-full bg-red-50 border border-red-100 hover:bg-red-100"
-      title="Clear day"
-      (click)="clearSelectedDay()"
-      aria-label="Clear day"
+  <div class="bg-white rounded-xl z-10 w-[90%] max-w-md mx-auto relative overflow-hidden">
+    <div
+      class="bg-emerald-600 w-full h-15 relative flex items-center justify-center text-white"
     >
-      <span class="material-icons text-red-600" aria-hidden="true">delete_forever</span>
-    </button>
+      <!-- Left-top: Delete  -->
+      <button
+        class="absolute left-3 top-3 inline-flex items-center justify-center w-9 h-9 rounded-xl bg-red-200 hover:bg-red-200/70 transition-colors duration-300 cursor-pointer"
+        title="Clear day"
+        (click)="clearSelectedDay()"
+        aria-label="Clear day"
+      >
+        <span class="material-icons text-red-600" aria-hidden="true">delete_forever</span>
+      </button>
 
-    <!-- Right-top: Close (ClearIcon) -->
-    <button
-      class="absolute -translate-y-2 right-3 top-3 inline-flex items-center justify-center w-9 h-9 rounded-full bg-gray-50 border border-gray-100 hover:bg-gray-100"
-      title="Close"
-      (click)="closeEditor()"
-      aria-label="Close editor"
-    >
-      <span class="material-icons text-gray-700" aria-hidden="true">clear</span>
-    </button>
-    <h3 class="text-lg font-semibold mb-3">
-      Edit {{ selectedDay.day }} {{ getCurrentMonthYear() }}
-    </h3>
+      <!-- Right-top: Close  -->
+      <button
+        class="absolute right-1/48 top-3 inline-flex items-center justify-center w-9 h-9 rounded-xl bg-gray-200 hover:bg-gray-200/70 transition-colors duration-300 cursor-pointer"
+        title="Close"
+        (click)="closeEditor()"
+        aria-label="Close editor"
+      >
+        <span class="material-icons text-gray-700" aria-hidden="true">clear</span>
+      </button>
 
-    <div class="space-y-3">
-      <div>
-        <label class="block text-xs text-gray-600">Water (liters)</label>
-        <input
-          type="number"
-          step="0.1"
-          [(ngModel)]="editingData.water"
-          class="w-full border rounded px-2 py-1"
-        />
-        <div class="text-xs text-gray-500">
-          Goal: <span>{{ formatCompact(editingData.waterGoal) }}</span> L
-        </div>
-      </div>
+      <!-- Right-top: Close  -->
+      <button
+        class="absolute right-3/24 top-3 inline-flex items-center justify-center w-9 h-9 rounded-xl bg-emerald-200 hover:bg-emerald-200/70 transition-colors duration-300 cursor-pointer"
+        title="Save"
+        (click)="saveData()"
+        aria-label="Save changes and close editor"
+      >
+        <span class="material-icons text-gray-700" aria-hidden="true">add</span>
+      </button>
 
-      <div>
-        <label class="block text-xs text-gray-600">Steps</label>
-        <input
-          type="number"
-          [(ngModel)]="editingData.steps"
-          class="w-full border rounded px-2 py-1"
-        />
-        <div class="text-xs text-gray-500">
-          Goal: <span>{{ formatCompact(editingData.stepsGoal) }}</span>
-        </div>
-      </div>
+
+      <!-- Day number display -->
+      <h3 class="text-lg font-semibold">{{ selectedDay.day }} {{ getCurrentMonthYear() }}</h3>
     </div>
 
-    <div class="mt-4 flex justify-end gap-2">
-      <button class="px-4 py-2 rounded bg-gray-200" (click)="closeEditor()">Cancel</button>
-      <button
-        class="px-4 py-2 rounded bg-red-100 text-red-700 border border-red-200"
-        (click)="clearSelectedDay()"
-      >
-        Clear
-      </button>
-      <button class="px-4 py-2 rounded bg-green-500 text-white" (click)="saveData()">Save</button>
+    <div class="p-6 space-y-3">
+      <div>
+        <mat-form-field  class="w-full">
+          <mat-label>Water | Goal: {{ formatCompact(editingData.waterGoal) }} L</mat-label>
+          <input
+            matInput
+            type="number"
+            step="0.1"
+            [(ngModel)]="editingData.water"
+            aria-label="Water in liters"
+          />
+          <mat-hint align="start"></mat-hint>
+        </mat-form-field>
+      </div>
+
+      <div>
+        <mat-form-field  class="w-full">
+          <mat-label>Steps | Goal: {{ formatCompact(editingData.stepsGoal) }}</mat-label>
+          <input matInput type="number" [(ngModel)]="editingData.steps" aria-label="Steps count" />
+        </mat-form-field>
+      </div>
     </div>
   </div>
 </div>
