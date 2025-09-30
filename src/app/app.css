@@ -42,3 +42,36 @@
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
 }
+
+/* Mobile-first responsive styles */
+@media (max-width: 767px) {
+  .calendar-weekday-header {
+    padding: 0.25rem;
+    font-size: 0.625rem;
+    width: 3.5rem;
+    height: 2rem;
+    border-radius: 0.25rem;
+  }
+
+  .calendar-day {
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    width: 3.5rem;
+    height: 4rem;
+  }
+}
+
+/* Tablet styles */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .calendar-weekday-header {
+    width: 6rem;
+    height: 2.5rem;
+    font-size: 0.7rem;
+  }
+
+  .calendar-day {
+    width: 6rem;
+    height: 5rem;
+    font-size: 0.9rem;
+  }
+}
