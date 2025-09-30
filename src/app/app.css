@@ -43,6 +43,20 @@
   box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
 }
 
+.click-to-add {
+  background-color: rgba(0, 0, 0, 0.04);
+  color: rgba(17, 24, 39, 0.9);
+  padding-top: 0.35rem;
+  padding-bottom: 0.35rem;
+}
+
+/* Modal backdrop helper (kept minimal - main layout in template) */
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+}
+
 /* Mobile-first responsive styles */
 @media (max-width: 767px) {
   .calendar-weekday-header {

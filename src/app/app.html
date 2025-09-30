@@ -70,6 +70,7 @@
             @for (day of week; track day?.date || $index) {
             <td
               class="calendar-day"
+              (click)="onDayClick(day)"
               [class]="
                 day && !day.isCurrentMonth
                   ? 'text-green-300 bg-white/40 hover:bg-green-200/30'
@@ -89,22 +90,43 @@
                 <!-- Wellness info below -->
                 @if (day) {
                 <div class="flex-1 flex flex-col justify-center">
+                  <!-- If user has data show it, otherwise show a darker 'Click to add' hint -->
+                  @if (hasDataForDay(day.date)) {
                   <div
                     class="bg-green-200 rounded-sm md:rounded-md p-0.5 md:p-1 text-xs text-blue-600 font-medium space-y-0 md:space-y-0.5"
                   >
                     <div class="flex items-center justify-between text-xs md:text-xs">
                       <span class="text-xs">💧</span>
                       <span class="text-right text-xs">
-                        1.5<span class="hidden sm:inline">/2.1</span>L
+                        {{ getDayData(day.date)?.water || 0
+                        }}<span class="hidden sm:inline"
+                          >/
+                          {{
+                            formatCompact(getDayData(day.date)?.waterGoal) || formatCompact(2)
+                          }}</span
+                        >L
                       </span>
                     </div>
                     <div class="flex items-center justify-between text-xs md:text-xs">
                       <span class="text-xs">🏃</span>
                       <span class="text-right text-xs">
-                        1k<span class="hidden sm:inline">/10k</span>
+                        {{ getDayData(day.date)?.steps || 0
+                        }}<span class="hidden sm:inline"
+                          >/
+                          {{
+                            formatCompact(getDayData(day.date)?.stepsGoal) || formatCompact(10000)
+                          }}</span
+                        >
                       </span>
                     </div>
                   </div>
+                  } @if (!hasDataForDay(day.date)) {
+                  <div
+                    class="bg-transparent rounded-sm md:rounded-md p-1 text-xs text-gray-700 font-medium italic click-to-add"
+                  >
+                    Click to add
+                  </div>
+                  }
                 </div>
                 }
               </div>
@@ -119,3 +141,72 @@
 </div>
 
 <router-outlet />
+
+<!-- Day Editor Modal -->
+@if (selectedDay) {
+<div class="fixed inset-0 z-50 flex items-center justify-center">
+  <div class="absolute inset-0 bg-black/50" (click)="closeEditor()"></div>
+  <div class="bg-white rounded-xl p-6 z-10 w-[92%] max-w-md mx-auto relative">
+    <!-- Left-top: Delete (DeleteForeverIcon) -->
+    <button
+      class="absolute -translate-y-2 left-3 top-3 inline-flex items-center justify-center w-9 h-9 rounded-full bg-red-50 border border-red-100 hover:bg-red-100"
+      title="Clear day"
+      (click)="clearSelectedDay()"
+      aria-label="Clear day"
+    >
+      <span class="material-icons text-red-600" aria-hidden="true">delete_forever</span>
+    </button>
+
+    <!-- Right-top: Close (ClearIcon) -->
+    <button
+      class="absolute -translate-y-2 right-3 top-3 inline-flex items-center justify-center w-9 h-9 rounded-full bg-gray-50 border border-gray-100 hover:bg-gray-100"
+      title="Close"
+      (click)="closeEditor()"
+      aria-label="Close editor"
+    >
+      <span class="material-icons text-gray-700" aria-hidden="true">clear</span>
+    </button>
+    <h3 class="text-lg font-semibold mb-3">
+      Edit {{ selectedDay.day }} {{ getCurrentMonthYear() }}
+    </h3>
+
+    <div class="space-y-3">
+      <div>
+        <label class="block text-xs text-gray-600">Water (liters)</label>
+        <input
+          type="number"
+          step="0.1"
+          [(ngModel)]="editingData.water"
+          class="w-full border rounded px-2 py-1"
+        />
+        <div class="text-xs text-gray-500">
+          Goal: <span>{{ formatCompact(editingData.waterGoal) }}</span> L
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-xs text-gray-600">Steps</label>
+        <input
+          type="number"
+          [(ngModel)]="editingData.steps"
+          class="w-full border rounded px-2 py-1"
+        />
+        <div class="text-xs text-gray-500">
+          Goal: <span>{{ formatCompact(editingData.stepsGoal) }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-4 flex justify-end gap-2">
+      <button class="px-4 py-2 rounded bg-gray-200" (click)="closeEditor()">Cancel</button>
+      <button
+        class="px-4 py-2 rounded bg-red-100 text-red-700 border border-red-200"
+        (click)="clearSelectedDay()"
+      >
+        Clear
+      </button>
+      <button class="px-4 py-2 rounded bg-green-500 text-white" (click)="saveData()">Save</button>
+    </div>
+  </div>
+</div>
+}
